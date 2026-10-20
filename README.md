@@ -94,8 +94,8 @@ flowchart TD
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/crypto-alert-monitor.git
-cd crypto-alert-monitor
+git clone https://github.com/R3xo666/crypto-telegram-threshold-monitor.git
+cd crypto-telegram-threshold-monitor
 
 # Create virtual environment
 python3 -m venv venv
