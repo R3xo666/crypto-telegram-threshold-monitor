@@ -1,0 +1,28 @@
+{
+  "poll_interval_seconds": 30,
+  "default_cooldown_minutes": 60,
+  "significant_move_override_percent": 5.0,
+  "targets": [
+    {
+      "symbol": "BTCUSDT",
+      "display_name": "Bitcoin (BTC)",
+      "upper_limit": 70000.0,
+      "lower_limit": 62000.0,
+      "cooldown_minutes": 60
+    },
+    {
+      "symbol": "ETHUSDT",
+      "display_name": "Ethereum (ETH)",
+      "upper_limit": 3800.0,
+      "lower_limit": 3200.0,
+      "cooldown_minutes": 60
+    },
+    {
+      "symbol": "SOLUSDT",
+      "display_name": "Solana (SOL)",
+      "upper_limit": 200.0,
+      "lower_limit": 140.0,
+      "cooldown_minutes": 30
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+[Unit]
+Description=24/7 Lightweight Crypto & Asset Threshold Monitor with Telegram Alerts
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=%I
+# Update WorkingDirectory to absolute path of project
+WorkingDirectory=/home/adi/Downloads/ProjectTask3
+# Execute python from project virtual environment
+ExecStart=/home/adi/Downloads/ProjectTask3/venv/bin/python3 main.py --config config/targets.json
+Restart=on-failure
+RestartSec=10s
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

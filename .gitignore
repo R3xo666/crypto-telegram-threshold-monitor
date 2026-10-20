@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Environment variables & secrets (CRITICAL: Never commit secrets)
+.env
+*.env.local
+
+# Runtime persistent state & logs
+data/state.json
+*.log
+
+# IDE files
+.vscode/
+.idea/
