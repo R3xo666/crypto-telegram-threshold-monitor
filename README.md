@@ -1,10 +1,10 @@
 # SentinelPulse
 
-SentinelPulse is an asynchronous Python service that checks configured market pairs against upper and lower price limits. It reads prices from Binance, falls back to CoinGecko when the primary request fails, and sends threshold alerts through Telegram.
+SentinelPulse is an asynchronous Python monitor for configured market pairs. It reads prices from Binance, uses CoinGecko as a fallback when the primary request fails, checks upper and lower limits, and sends alerts through Telegram.
 
-The watchlist, polling interval, and alert cooldowns are stored in `config/targets.json`. Alert state is saved to a JSON file so cooldowns survive restarts. The monitor reports prices and sends alerts; it does not place trades.
+It reports price conditions; it does not place trades. The sample watchlist contains example thresholds, so review and change them before relying on alerts.
 
-## Setup
+## Requirements and setup
 
 ~~~bash
 git clone https://github.com/R3xo666/crypto-telegram-threshold-monitor.git
@@ -15,25 +15,53 @@ pip install -r requirements.txt
 cp .env.example .env
 ~~~
 
-Set `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in `.env`. Keep that file private. Market data uses public endpoints and does not require an API key.
+Set `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in `.env`. Keep the file private. `LOG_LEVEL` is optional. The price feeds use public endpoints and need no market-data API key.
 
-Edit `config/targets.json` to set the symbols, threshold prices, polling interval, and cooldowns.
+## Watchlist configuration
+
+Edit `config/targets.json`:
+
+| Field | Meaning |
+| --- | --- |
+| `poll_interval_seconds` | Time between checks; minimum 5 seconds |
+| `default_cooldown_minutes` | Default wait before another alert for a target |
+| `significant_move_override_percent` | Further move that can trigger an alert during cooldown |
+| `targets` | List of pairs and their thresholds |
+| `targets[].symbol` | Exchange pair, such as `BTCUSDT` |
+| `targets[].display_name` | Name shown in the alert |
+| `targets[].upper_limit` | Optional upper price boundary |
+| `targets[].lower_limit` | Optional lower price boundary |
+| `targets[].cooldown_minutes` | Optional per-target cooldown |
+
+An alert is considered when a price reaches or crosses a configured boundary. During the cooldown, the monitor can send another alert if the price moves farther in the same direction by the configured override percentage. The last alert state is stored in `data/state.json` by default.
+
+The CoinGecko fallback currently maps `BTCUSDT`, `ETHUSDT`, `SOLUSDT`, `BNBUSDT`, `ADAUSDT`, `DOGEUSDT`, and `XRPUSDT`. Other configured pairs depend on the Binance feed.
 
 ## Run
 
-Poll once and print any resulting alert instead of sending it:
+Run one check and print alerts to the terminal:
 
 ~~~bash
 python3 main.py --dry-run --once
 ~~~
 
-Start the continuous monitor:
+Run continuously with Telegram delivery:
 
 ~~~bash
 python3 main.py
 ~~~
 
-`--config` selects another watchlist file, `--state` changes the state-file path, and `--test-alert` sends a Telegram test message. Use `--dry-run` with that option to keep the message in the console.
+### Command-line options
+
+| Option | Description |
+| --- | --- |
+| `-c`, `--config` | Watchlist JSON file; default `config/targets.json` |
+| `--state` | State JSON file; default `data/state.json` |
+| `--dry-run` | Print alerts in the terminal instead of sending them |
+| `--once` | Run one poll and exit |
+| `--test-alert` | Send a Telegram startup test message; combine with `--dry-run` to print it locally |
+
+Without Telegram credentials, notifications fall back to dry-run output. The process handles `Ctrl+C` and saves its alert state on shutdown.
 
 ## Tests
 
